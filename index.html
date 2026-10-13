@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>我的资产配置自查 · 大卫翁方法论</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#fff; --ink:#1c1f23; --muted:#6b7280; --line:#e5e7eb;
+    --accent:#1f6feb; --accent-soft:#eaf1fe;
+    --ok:#127a4a; --ok-soft:#e8f6ee;
+    --warn:#b45309; --warn-soft:#fdf3e3;
+    --bad:#b42318; --bad-soft:#fdecea;
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.65 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    -webkit-text-size-adjust:100%}
+  .wrap{max-width:860px;margin:0 auto;padding:0 16px 80px}
+  header{padding:28px 0 18px}
+  h1{font-size:22px;margin:0 0 6px;letter-spacing:.2px}
+  .sub{color:var(--muted);font-size:13px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin-bottom:14px}
+  .card h2{font-size:15px;margin:0 0 12px;display:flex;align-items:center;gap:8px}
+  .card h2 .n{display:inline-flex;width:22px;height:22px;border-radius:50%;background:var(--accent-soft);color:var(--accent);
+    font-size:12px;align-items:center;justify-content:center;font-weight:600}
+  fieldset{border:0;padding:0;margin:0 0 14px}
+  legend{font-size:13px;font-weight:600;color:var(--muted);padding:0 0 8px;letter-spacing:.3px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+  .f{display:flex;flex-direction:column;gap:4px}
+  .f label{font-size:12.5px;color:var(--muted)}
+  input,select{font:inherit;padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink);width:100%}
+  input:focus,select:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
+  .hint{font-size:11.5px;color:var(--muted)}
+  .btnbar{display:flex;gap:10px;flex-wrap:wrap;margin:4px 0 0}
+  button{font:inherit;font-weight:600;padding:11px 18px;border-radius:10px;border:1px solid var(--line);background:#fff;cursor:pointer}
+  button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  button.ghost{background:#fff;color:var(--muted)}
+  .stage{background:linear-gradient(180deg,#fff,#fbfcfe);border:1px solid var(--line);border-left:5px solid var(--accent)}
+  .stage .code{font-size:12px;color:var(--accent);font-weight:700;letter-spacing:1px}
+  .stage .name{font-size:24px;font-weight:750;margin:2px 0 6px}
+  .stage .why{font-size:13px;color:var(--muted)}
+  .tag{display:inline-block;font-size:11.5px;padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);margin-right:6px}
+  ol.acts{list-style:none;padding:0;margin:0;counter-reset:a}
+  ol.acts li{counter-increment:a;position:relative;padding:11px 0 11px 38px;border-bottom:1px dashed var(--line)}
+  ol.acts li:last-child{border-bottom:0}
+  ol.acts li::before{content:counter(a);position:absolute;left:0;top:11px;width:24px;height:24px;border-radius:50%;
+    background:var(--accent);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  ol.acts li b{display:block;margin-bottom:2px}
+  ol.acts li .d{font-size:13px;color:var(--muted)}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+  .stat{background:#fafbfc;border:1px solid var(--line);border-radius:11px;padding:12px}
+  .stat .k{font-size:11.5px;color:var(--muted)}
+  .stat .v{font-size:19px;font-weight:700;margin:3px 0 2px;word-break:break-all}
+  .stat .n{font-size:11.5px;color:var(--muted)}
+  .bar{height:10px;background:#eef1f4;border-radius:999px;overflow:hidden;margin:6px 0 4px}
+  .bar i{display:block;height:100%;background:linear-gradient(90deg,#3b82f6,#22c55e)}
+  .bucket{display:grid;grid-template-columns:120px 1fr;gap:12px;align-items:center;padding:10px 0;border-bottom:1px dashed var(--line)}
+  .bucket:last-child{border-bottom:0}
+  .bucket .t{font-weight:650;font-size:13.5px}
+  .bucket .t small{display:block;font-weight:400;color:var(--muted);font-size:11.5px}
+  .note{background:var(--warn-soft);border:1px solid #f3d9a8;color:#7a4a06;border-radius:11px;padding:11px 13px;font-size:13px;margin:8px 0}
+  .alert{background:var(--bad-soft);border:1px solid #f3c2bd;color:#8a1c12;border-radius:11px;padding:11px 13px;font-size:13px;margin:8px 0}
+  .good{background:var(--ok-soft);border:1px solid #bfe6cf;color:#0d5c38;border-radius:11px;padding:11px 13px;font-size:13px;margin:8px 0}
+  ul.rl{margin:0;padding-left:20px}
+  ul.rl li{margin:5px 0;font-size:13.5px}
+  table.cal{width:100%;border-collapse:collapse;font-size:13.5px}
+  table.cal td{padding:9px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+  table.cal td:first-child{width:92px;color:var(--accent);font-weight:650;white-space:nowrap}
+  .src{font-size:11.5px;color:var(--muted);margin-top:8px}
+  .src b{color:#4b5563}
+  details{margin-top:8px}
+  summary{cursor:pointer;font-size:12.5px;color:var(--accent)}
+  footer{font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding:16px 0 0;margin-top:8px}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .pill{font-size:11.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);color:var(--muted);background:#fff}
+  .pill.done{background:var(--ok-soft);border-color:#bfe6cf;color:var(--ok)}
+  .pill.todo{background:var(--warn-soft);border-color:#f3d9a8;color:var(--warn)}
+  @media print{
+    body{background:#fff}
+    .noprint{display:none!important}
+    .card{break-inside:avoid;border-color:#ccc}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>我的资产配置自查</h1>
+  <div class="sub">按大卫翁《资产配置行动指南》的框架 · 填入你的数字 → 直接告诉你<b>现在在哪个阶段、今天该做什么</b></div>
+</header>
+
+<!-- ============ 输入 ============ -->
+<section class="card noprint" id="inputCard">
+  <h2><span class="n">1</span>填入你的数字（不知道的可以留空，留空会告诉你先去算什么）</h2>
+
+  <fieldset>
+    <legend>基本情况</legend>
+    <div class="grid">
+      <div class="f"><label>年龄</label><input id="age" type="number" inputmode="numeric" placeholder="如 32"></div>
+      <div class="f"><label>你的收入类型</label>
+        <select id="jobType">
+          <option value="founder" selected>创业者 / 自由职业（期权型）</option>
+          <option value="employee">企业上班（股票型）</option>
+          <option value="stable">体制内 / 国企（债券型）</option>
+        </select>
+      </div>
+      <div class="f"><label>是否有长期生活的伴侣</label>
+        <select id="hasPartner"><option value="yes">有</option><option value="no">没有</option></select>
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>收入（过去 12 个月）</legend>
+    <div class="grid">
+      <div class="f"><label>最好的一个月（元）</label><input id="incBest" type="number" inputmode="numeric" placeholder="可选"></div>
+      <div class="f"><label>中位数月份（元）</label><input id="incMedian" type="number" inputmode="numeric" placeholder="可选"></div>
+      <div class="f"><label>最差的连续 3 个月，月均（元）</label><input id="incWorst3" type="number" inputmode="numeric" placeholder="关键：用来定你的固定工资">
+        <span class="hint">填最差那 3 个月的总和 ÷ 3</span></div>
+      <div class="f"><label>预计每月能存下多少（元）</label><input id="saveMonthly" type="number" inputmode="numeric" placeholder="用来估算还要攒多久"></div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>月固定支出 M（把每一项填上，自动加总；也可以只填最后一项）</legend>
+    <div class="grid">
+      <div class="f"><label>房租 / 房贷月供</label><input class="exp" id="expRent" type="number" inputmode="numeric" placeholder="0"></div>
+      <div class="f"><label>水电燃气通信网络</label><input class="exp" id="expUtil" type="number" inputmode="numeric" placeholder="0"></div>
+      <div class="f"><label>社保 / 公积金（自缴部分）</label><input class="exp" id="expSocial" type="number" inputmode="numeric" placeholder="0"></div>
+      <div class="f"><label>保险（医疗/意外/定寿）</label><input class="exp" id="expInsurance" type="number" inputmode="numeric" placeholder="0"></div>
+      <div class="f"><label>其他贷款每月还款</label><input class="exp" id="expDebt" type="number" inputmode="numeric" placeholder="0"></div>
+      <div class="f"><label>通勤 / 交通</label><input class="exp" id="expCommute" type="number" inputmode="numeric" placeholder="0"></div>
+      <div class="f"><label>最低饮食</label><input class="exp" id="expFood" type="number" inputmode="numeric" placeholder="0"></div>
+      <div class="f"><label>孩子 / 父母固定支出</label><input class="exp" id="expFamily" type="number" inputmode="numeric" placeholder="0"></div>
+      <div class="f"><label>其他固定支出</label><input class="exp" id="expOther" type="number" inputmode="numeric" placeholder="0"></div>
+      <div class="f"><label>或：直接填 M 总额（会覆盖上面）</label><input id="expTotalOverride" type="number" inputmode="numeric" placeholder="可留空"></div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>资产（按能不能快速变现分开填，这决定了你的安全垫）</legend>
+    <div class="grid">
+      <div class="f"><label>现金 / 活期</label><input class="cash" id="aCash" type="number" inputmode="numeric" placeholder="0"></div>
+      <div class="f"><label>货币基金 / 余额宝类</label><input class="cash" id="aMmf" type="number" inputmode="numeric" placeholder="0"></div>
+      <div class="f"><label>银行定期 / 大额存单</label><input class="cash" id="aDeposit" type="number" inputmode="numeric" placeholder="0"></div>
+      <div class="f"><label>债券 / 债券基金</label><input class="liq" id="aBond" type="number" inputmode="numeric" placeholder="0"></div>
+      <div class="f"><label>股票 / 股基 / 指数基金</label><input class="liq" id="aStock" type="number" inputmode="numeric" placeholder="0"></div>
+      <div class="f"><label>黄金等另类</label><input class="liq" id="aGold" type="number" inputmode="numeric" placeholder="0"></div>
+      <div class="f"><label>其他能快速变现的钱</label><input class="liq" id="aOther" type="number" inputmode="numeric" placeholder="0"></div>
+    </div>
+    <span class="hint">不算进来：房子、车、公司股权、公积金、社保个人账户（书中：这些变现难度高，不计入流动资产）</span>
+  </fieldset>
+
+  <fieldset>
+    <legend>负债</legend>
+    <div class="grid">
+      <div class="f"><label>高息负债余额（信用卡/消费贷/网贷/亲友）</label><input id="debtHigh" type="number" inputmode="numeric" placeholder="0"></div>
+      <div class="f"><label>高息负债平均年利率（%）</label><input id="debtHighRate" type="number" inputmode="numeric" placeholder="如 12"></div>
+      <div class="f"><label>房贷余额</label><input id="debtMortgage" type="number" inputmode="numeric" placeholder="0"></div>
+      <div class="f"><label>房贷年利率（%）</label><input id="debtMortgageRate" type="number" inputmode="numeric" placeholder="如 3.5"></div>
+      <div class="f"><label>有没有为公司/项目做过个人担保、抵押？</label>
+        <select id="hasGuarantee"><option value="no">没有</option><option value="yes">有</option></select>
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>保障</legend>
+    <div class="grid">
+      <div class="f"><label>社保 / 医保是否连续缴纳</label>
+        <select id="socialOn"><option value="yes">是</option><option value="no">断了 / 没交</option></select></div>
+      <div class="f"><label>是否已有百万医疗险</label>
+        <select id="hasMedical"><option value="yes">有</option><option value="no">没有</option></select></div>
+      <div class="f"><label>是否有定期寿险（有伴侣时重要）</label>
+        <select id="hasLife"><option value="no">没有</option><option value="yes">有</option></select></div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>未来要花的钱（可留空）</legend>
+    <div class="grid">
+      <div class="f"><label>未来 3 年确定的大额支出（元）</label><input id="future3y" type="number" inputmode="numeric" placeholder="买房首付/生育/父母医疗/设备"></div>
+      <div class="f"><label>退休后每年想花的钱（元）</label><input id="retireSpend" type="number" inputmode="numeric" placeholder="用来反推退休账户目标"></div>
+    </div>
+  </fieldset>
+
+  <!-- 伴侣 -->
+  <fieldset id="coupleField">
+    <legend>伴侣相关（可选，但强烈建议填）</legend>
+    <div class="grid">
+      <div class="f"><label>伴侣月收入（元）</label><input id="partnerIncome" type="number" inputmode="numeric" placeholder="可选"></div>
+      <div class="f"><label>你们每月的共同支出合计（元）</label><input id="sharedCost" type="number" inputmode="numeric" placeholder="默认按你的 M 估算"></div>
+      <div class="f"><label>伴侣是否在同一行业 / 你的公司？</label>
+        <select id="sameIndustry"><option value="no">不是</option><option value="yes">是</option></select></div>
+      <div class="f"><label>伴侣社保是否连续</label>
+        <select id="partnerSocial"><option value="yes">是</option><option value="no">否 / 不清楚</option></select></div>
+    </div>
+  </fieldset>
+
+  <div class="btnbar">
+    <button class="primary" id="btnCalc">生成我的方案</button>
+    <button class="ghost" id="btnDemo">填入示例数据</button>
+    <button class="ghost" id="btnClear">清空</button>
+  </div>
+  <div class="src">数据只保存在你这台电脑的浏览器里（localStorage），不会上传到任何地方。</div>
+</section>
+
+<!-- ============ 结果 ============ -->
+<section id="out" hidden></section>
+
+<footer>
+  <b>依据</b>：大卫翁《资产配置行动指南》（中信出版社 2026）第 1–10 章与结语；播客《嗨咻》110 期〈和大卫翁聊天｜女人如何掌握家庭财政大权？〉。<br>
+  凡标 <b>[书·N章]</b> 的规则来自原书；标 <b>[推演]</b> 的是把书中框架套到"创业者 + 无存款 + 收入不稳定"处境上的推论，不是作者原话。<br>
+  本工具是个人财务管理自查，<b>不构成投资、法律或税务意见</b>。涉及担保、合同、财产安排请咨询专业律师与税务师。
+</footer>
+</div>
+
+<script>
+/* =======================================================================
+   规则常量（全部来自《资产配置行动指南》）
+   ======================================================================= */
+const CFG = {
+  THRESHOLD_DIVISOR: 10000,   // 书·2章：消费决策阈值 = (流动资产+工资年收入×20)÷10000
+  INCOME_YEARS: 20,           // 书·2章：上班族才加这一项
+  L1: 1, L2: 3, L3: 6, L4: 12,// 安全垫阶梯（【推演】分级；6–12个月是书中标准）
+  SINGLE_CAP: 0.20,           // 书·6章 安全带卡
+  SINGLE_CAP_BIG: 0.10,
+  MONTHLY_TURNOVER: 0.05,     // 书·10章
+  GOLD_CAP: 0.10,             // 书·3章
+  TRAILING_STOP: 0.20,        // 书·5章
+  REVIEW_DAYS: [30, 90, 360], // 书·6章
+  WITHDRAWAL_RATE: 0.04,      // 播客：晨星 3.9%，按 4% 粗算
+  DEPOSIT_RATE: 0.01,         // 用于演示高息负债的"利差损失"
+  NIGHT_LINE: 1000            // 【推演】流动资产极小时的固定过夜线
+};
+
+/* =======================================================================
+   计算
+   ======================================================================= */
+function computeAll(d){
+  const M = d.M, C = d.C, A = d.A;
+  const risk = d.aBond + d.aStock + d.aGold + d.aOther; // 非现金类
+  const months = M > 0 ? C / M : 0;
+
+  // 收入波动：最差3个月月均 ÷ 中位数月
+  const vol = (d.incMedian > 0 && d.incWorst3 > 0) ? d.incWorst3 / d.incMedian : null;
+
+  // 消费阈值
+  const isStable = d.jobType === 'stable';
+  const isEmployee = d.jobType === 'employee';
+  const wageYear = (isStable || isEmployee) ? d.incMedian * 12 : 0; // 自由职业者不加【书·2章】
+  const pool = A + wageYear * CFG.INCOME_YEARS;
+  const threshold = pool / CFG.THRESHOLD_DIVISOR;
+  // 若按上班族口径（把未来收入加进来）会算成多少——用来说明"自由职业者的代价"
+  const thresholdIfEmployee = (A + (d.incMedian * 12) * CFG.INCOME_YEARS) / CFG.THRESHOLD_DIVISOR;
+  // 过夜线 = 取书里两条规则里更保守的那个，再加一个固定下限【推演】
+  const nightLine = Math.max(CFG.NIGHT_LINE, Math.round(threshold), Math.round(A * 0.01));
+  const cooldown1 = Math.round(A * 0.01);
+  const cooldown2 = Math.round(A * 0.02);
+
+  // 高息负债的利差损失
+  const spreadRate = d.debtHighRate > 0 ? d.debtHighRate : 0;
+  const spreadLoss = d.debtHigh > 0 && spreadRate > 0
+    ? d.debtHigh * (spreadRate - CFG.DEPOSIT_RATE) / 100 : 0;
+
+  // ------- 阶段判定 -------
+  const hasCore = (M > 0) && (A > 0 || C > 0 || d.anyAssetFilled);
+  const blockers = [];
+  if (d.debtHigh > 0) {
+    blockers.push(spreadRate >= 8
+      ? `高息负债 ¥${fmt(d.debtHigh)}（年利率 ${spreadRate}%）——利率远高于任何理财收益`
+      : `有高息负债 ¥${fmt(d.debtHigh)}${spreadRate > 0 ? '（年利率 ' + spreadRate + '%）' : '（利率待确认）'}`);
+  }
+  if (d.hasGuarantee) blockers.push('为公司 / 项目做过个人担保或抵押——公司风险已经牵到家庭');
+  if (!d.socialOn) blockers.push('社保 / 医保断缴——创业者最便宜的兜底没了');
+
+  let stage, sub = '';
+  if (!hasCore) { stage = 0; }
+  else if (blockers.length) { stage = 1; }
+  else if (months < CFG.L2) {
+    stage = 2;
+    sub = months < CFG.L1 ? 'L1：连 1 个月都还没到' : 'L2：已有 1–3 个月';
+  } else { stage = 5; sub = months < CFG.L3 ? '满 3 个月 · 可启动第三笔钱' : (months < CFG.L4 ? '满 6 个月 · 可加第二笔钱' : '满 12 个月 · 三笔钱全面展开'); }
+
+  const STAGE_META = {
+    0: { name: '建立财务地图', why: '你还缺关键数字，先算出 M（月固定支出）、安全垫现金 C、流动资产 A。没有这三个数，后面所有判断都是猜。', code: '阶段 0' },
+    1: { name: '止血与隔离', why: '安全垫先放一放：负债、担保、社保这些洞不堵上，你攒多少都会被漏掉。', code: '阶段 1' },
+    2: { name: '建安全垫', why: '你的现金类资产还不够 3 个月固定支出。按书里的顺序，这一步没走完不做任何风险投资。', code: '阶段 2' },
+    5: { name: '启动三笔钱', why: '安全垫已过 3 个月，你终于被允许进入"配置"阶段。但注意你仍是期权型收入，配置要偏稳、避开自己的行业。', code: '阶段 5' }
+  };
+
+  // ------- 当前阶段该做什么 -------
+  const actions = [];
+  const add = (t, dd, tag) => actions.push({ t, d: dd, tag: tag || '' });
+
+  if (stage === 0) {
+    add('算 M：把房租/房贷、水电通信、社保、保险、还款、通勤、最低饮食加起来', '用本页上方"月固定支出"那一栏逐项填，或者用配套的 Excel《3-收支表》。不想记流水账就用"截面账/拍快照"：每个季度把银行、支付宝、信用卡账户摊开记一次数字，跟这段时间的总收入对比就能反推出支出。[书·2章]', '必做');
+    add('算 C 和 A：把所有账户余额列出来，按"能不能快速变现"分开', 'C＝现金+货币基金+定存（这是你的安全垫）；A＝C + 债 + 股票基金 + 黄金等其他能快速变现的钱。房子、车、公司股权、公积金、社保个人账户都不算。[书·1章]', '必做');
+    add('列负债：每一笔的余额和年利率', '尤其别漏两样：① 为公司做的个人担保或抵押；② 隐形负债——父母如果没有养老金/医保，他们的大病风险就是家庭的负债。[播客 39:22]', '必做');
+    add('把这三个数字填回本页，重新生成一次', '有数字才能判断阶段。', '');
+  }
+
+  if (stage === 1) {
+    add('把高息负债按利率从高到低排个序，从最高的开始还', spreadLoss > 0
+      ? `按你填的数字，这笔高息负债每年光利差就吃掉约 ¥${fmt(spreadLoss)}（对比 1% 的存款利率）。书里的逻辑：4% 的房贷减 1% 的存款就是 3% 的净损失，利率越高越是"什么都不干也在亏"。[书·9章 / 播客 45:35]`
+      : '利率高于任何稳健理财收益的负债，优先级排在任何投资之前。[书·9章]', '最高优先级');
+    add('立刻停掉"以贷养创"：不再借新钱补公司现金流', '这是把家庭资产负债表和公司风险绑在一起，一旦公司出事，家庭同时归零。[推演]', '止血');
+    add('关掉新增担保 / 抵押，已经有的去咨询专业人士怎么退出', '不要把公司风险搬回家。具体怎么安排（公司形式、股权、担保退出）属于法律事务，请律师处理——我只给方向。[推演]', '止血');
+    add('社保 / 医保马上续上', '灵活就业、个体户都能自己交。书里把"医疗保险"列为任何组合都该有的三样东西之一。[书·10章]', d.socialOn ? '' : '保障');
+    add('配齐百万医疗 + 意外 + 定期寿险', '先保大风险，后保小概率。有长期伴侣时定寿尤其重要——你的收入不稳定，说明 TA 承担了更高的尾部风险。保险费是支出不是投资，写进 M。[推演]', '保障');
+    add('设一条"过夜线"：单笔 ≥ ¥' + fmt(nightLine) + ' 的非必要支出，过夜再决定', '书·10章的冷静期规则是"单笔达到流动资产的 1% 冷静 1 天、2% 冷静 2 天"；你现在流动资产太小，1% 会小到没意义，所以换成固定金额更实用。[推演]', '纪律');
+  }
+
+  if (stage === 2) {
+    if (months < CFG.L1) {
+      add(`开一个"只进不出"的安全垫账户，设自动转账，先把现金类冲到 ${CFG.L1} × M = ¥${fmt(M * CFG.L1)}`, `放货币基金或活期就行。书里的原话：这笔钱"不要想着去投资、理财、买股票、买基金"，它的作用是"心理压舱石"。[播客 65:27]${d.saveMonthly > 0 ? ` 按每月存 ¥${fmt(d.saveMonthly)} 估算，约 ${Math.max(1, Math.ceil(Math.max(0, M - C) / d.saveMonthly))} 个月能到第一级。` : ''}`, '现在做');
+      add(`再到 ${CFG.L2} × M = ¥${fmt(M * CFG.L2)} —— 到这一步你才被允许启动第三笔钱`, `离第一级还差 ¥${fmt(Math.max(0, M - C))}，离 3 个月还差 ¥${fmt(Math.max(0, M * CFG.L2 - C))}。${d.saveMonthly > 0 ? `按每月存 ¥${fmt(d.saveMonthly)} 估算，到 3 个月大约还要 ${Math.ceil(Math.max(0, M * CFG.L2 - C) / d.saveMonthly)} 个月。` : '（填一下"每月能存多少"，我可以算还要几个月。）'}`, '主目标');
+    } else {
+      add(`继续把安全垫推到 ${CFG.L2} × M = ¥${fmt(M * CFG.L2)}`, `你现在是 ${months.toFixed(1)} 个月，还差 ¥${fmt(Math.max(0, M * CFG.L2 - C))}。${d.saveMonthly > 0 ? `按每月存 ¥${fmt(d.saveMonthly)} 估算，约 ${Math.ceil(Math.max(0, M * CFG.L2 - C) / d.saveMonthly)} 个月。` : ''}到这一步你才被允许启动第三笔钱。[推演]`, '主目标');
+      add(`之后的两档：${CFG.L3} × M = ¥${fmt(M * CFG.L3)}（解锁第二笔钱），${CFG.L4} × M = ¥${fmt(M * CFG.L4)}（你的期权型收入才算真正有容错空间）`, `书里对收入不稳定的人的标准是往 ${CFG.L4} 个月靠，不是 6 个月。${d.saveMonthly > 0 ? `按每月存 ¥${fmt(d.saveMonthly)} 估算，到 12 个月大约还要 ${Math.ceil(Math.max(0, M * CFG.L4 - C) / d.saveMonthly)} 个月。` : ''}`, '路线图');
+    }
+    if (risk > 0) add('先停止往风险资产里新增投入', `你有 ¥${fmt(risk)} 在债/股/黄金里，这部分不算安全垫。在你补齐 ${CFG.L2} 个月现金之前，先把新增的钱全部放到安全垫里。（已有的要不要卖出，涉及亏损和税费，请你自己判断。）[推演]`, '调整');
+    add('同时砍固定支出 M —— 这是当前回报率最高的动作', `M 每降 10%（约 ¥${fmt(M * 0.1)}/月），你要攒的安全垫就少 ¥${fmt(M * 0.1 * CFG.L4)}。收入不稳定的时候，把"生存线"压低比多赚一笔更可靠。[推演]`, '高回报');
+    add('给自己发固定工资：按最差 3 个月的月均 ¥' + fmt(d.incWorst3 || 0) + ' 来定', '每笔回款按固定顺序分流：①税费/社保账户 → ②业务周转金 → ③生活账户（你的工资）→ ④老板储蓄（安全垫）。旺季多出来的钱进"缓冲池"，淡季补自己的工资。[推演]', '并行');
+  }
+
+  if (stage === 5) {
+    add(`第三笔钱（长期账户）：现在可以小额、自动地开始定投`, `金额小到不影响你继续把安全垫做到 ${CFG.L4} × M。方向：宽基指数（沪深300 / 标普500 / 恒生）+ 一点债券 + 一点黄金，单只不超过总资产 20%，绝对不加杠杆。主动避开你自己的行业——"你了解这个行业，跟你了解这个行业的股票，完全不是一回事"。[书·3/6章 · 播客 77:00]`, '可开始');
+    if (months >= CFG.L3) add('第二笔钱（未来 3–5 年确定的支出）开始积累', d.future3y > 0 ? `你填的确定支出是 ¥${fmt(d.future3y)}。放定存、大额存单或纯债基金，做期限匹配。注意是"纯债"，别买成名字像纯债、其实配了很多股票的"收益增强型"。[书·3章]` : '放定存、大额存单或纯债基金，期限匹配。首付款的钱，安全性和流动性压倒一切。[书·1章]', '可开始');
+    if (months >= CFG.L4) add('安全垫到 12 个月，可以按"两轴象限"决定核心区仓位', `核心区（我需要且完全能接受）配最大比例；探索区（需要但认知不足）只用小钱；回避区（我不需要）无论多懂都不配。[书·10章]`, '');
+    add('把这五条纪律写进手机备忘录', `① 单一资产 ≤ 20%（规模大收紧到 10%），严禁杠杆；② 每月投资行为 ≤ 组合的 5%；③ 长期账户止盈线＝自最高点回落超 ${CFG.TRAILING_STOP * 100}%；④ 每笔交易写"触发—证据—假设—退出条件"，第 ${CFG.REVIEW_DAYS.join('/')} 天复核；⑤ 黄金类不超过总资产 ${CFG.GOLD_CAP * 100}%。[书·3/5/6/10章]`, '纪律');
+    add('减少看账户和交易的频率', `"减少你的投资决策频率，减少交易的频率"是书里给的长期收益诀窍；普通投资者一个月做一次决策都太频繁，一个季度甚至半年一次更合适。[书·5章 / 播客 80:58]`, '纪律');
+    add('只在做完当月的投资账之后，才允许执行下一个投资决策', '这是他自己的规矩：用"记投资账"这个动作，把决策频率物理限制住。[书·5章]', '纪律');
+  }
+
+  // 并行任务：收入结构化 & 保障（不论阶段都要看）
+  const parallel = [
+    { t: '阶段 3 · 收入结构化', done: false, d: '四账户分流 + 给自己发固定工资 + 提高"可重复收入"占比。这一步从今天就可以做，不用等安全垫。' },
+    { t: '阶段 4 · 社保', done: d.socialOn, d: d.socialOn ? '社保/医保连续缴纳，保持住。' : '还没交或断缴，立刻续上。' },
+    { t: '阶段 4 · 商业保险', done: d.hasMedical, d: d.hasMedical ? '已有医疗险。有伴侣的话确认一下定期寿险。' : '百万医疗 + 意外 + 定期寿险还没配齐。' }
+  ];
+
+  // ------- 关键数字 -------
+  const months2L4 = d.saveMonthly > 0 ? Math.ceil(Math.max(0, M * CFG.L4 - C) / d.saveMonthly) : null;
+  const stats = [
+    { k: 'M · 月固定支出', v: '¥' + fmt(M), n: '所有目标的分母' },
+    { k: 'C · 安全垫现金', v: '¥' + fmt(C), n: '现金+货基+定存' },
+    { k: 'A · 流动资产', v: '¥' + fmt(A), n: 'C + 债 + 股 + 黄金' },
+    { k: '安全垫覆盖', v: months.toFixed(1) + ' 个月', n: `目标 ${CFG.L4} 个月（L4）` },
+    { k: `距 ${CFG.L4} 个月还差`, v: '¥' + fmt(Math.max(0, M * CFG.L4 - C)), n: months2L4 !== null ? `按每月存 ¥${fmt(d.saveMonthly)} 约 ${months2L4} 个月` : '填"每月能存多少"可估算' },
+    { k: '消费决策阈值', v: '¥' + fmt(Math.round(threshold)),
+      n: (isStable || isEmployee) ? '含未来收入×20' : '自由职业者口径：只算流动资产' },
+    { k: '实操过夜线', v: '¥' + fmt(nightLine), n: '单笔超过它 → 过夜再决定【推演】' },
+    { k: '负债每年利差损失', v: spreadLoss > 0 ? '¥' + fmt(Math.round(spreadLoss)) : '—', n: '高息负债 vs 1% 存款' },
+    { k: '收入波动系数', v: vol !== null ? vol.toFixed(2) : '—', n: '最差3个月月均 ÷ 中位月，越低越不稳' }
+  ];
+  if (A >= 1000) {
+    stats.splice(3, 0, { k: '投资冷静期', v: `¥${fmt(cooldown1)} / 1天`, n: `单笔达 ¥${fmt(cooldown2)} 则冷静 2 天` });
+  }
+  if (d.jobType === 'founder' && d.incMedian > 0 && thresholdIfEmployee > threshold) {
+    stats.push({ k: '上班族口径会是多少', v: '¥' + fmt(Math.round(thresholdIfEmployee)),
+      n: `同一笔钱，如果按上班族算（收入×20）就是 ¥${fmt(Math.round(thresholdIfEmployee))}，你是 ¥${fmt(Math.round(threshold))}——这就是书中说的"自由职业者要付的一点小代价"` });
+  }
+  if (d.retireSpend > 0) {
+    stats.push({ k: '退休账户目标', v: '¥' + fmt(d.retireSpend / CFG.WITHDRAWAL_RATE), n: `年支出 ¥${fmt(d.retireSpend)} ÷ 4%（×25）` });
+  }
+  const equityBase = d.age > 0 ? (100 - d.age) : null;
+  if (equityBase !== null) {
+    stats.push({ k: '权益比例参考上限', v: equityBase + '%', n: d.jobType === 'founder' ? '⚠️ 你是创业者，作者明确说该往下调' : '书·6章：权益≈(100−年龄±10%)' });
+  }
+
+  // ------- 三笔钱 -------
+  const buckets = [
+    { t: '第零笔<br><small>业务周转金</small>', cur: null, target: null, n: '公司账上的钱不是你的钱。与家庭生活垫物理隔离，绝不互相挪用。[推演]', pct: null },
+    { t: '第一笔 · 应急<br><small>安全垫</small>', cur: C, target: M * CFG.L4, n: `6–12 个月家庭支出，放货币基金/活期。书里原话："不要想着去投资、理财、买股票、买基金"。[播客 65:27]`, pct: M > 0 ? Math.min(1, C / (M * CFG.L4)) : 0 },
+    { t: '第二笔 · 未来<br><small>3–5 年确定支出</small>', cur: 0, target: d.future3y || 0, n: months >= CFG.L3 ? '已解锁：定存/大额存单/纯债，期限匹配。' : `未解锁：安全垫满 ${CFG.L3} 个月后才开始。[推演]`, pct: (d.future3y > 0) ? Math.min(1, 0 / d.future3y) : 0 },
+    { t: '第三笔 · 长期<br><small>退休账户</small>', cur: 0, target: d.retireSpend > 0 ? d.retireSpend / CFG.WITHDRAWAL_RATE : 0, n: months >= CFG.L2 ? '已解锁：小额定投、自动扣款、然后不管它。' : `未解锁：安全垫满 ${CFG.L2} 个月后才启动。`, pct: 0 }
+  ];
+
+  // ------- 警告 -------
+  const warnings = [];
+  if (C > 0 && months < CFG.L2 && risk > 0) {
+    warnings.push({ type: 'alert', t: `你有 ¥${fmt(risk)} 在风险资产里，但安全垫只有 ${months.toFixed(1)} 个月。按书里的顺序，这一步是反的：先把 ${CFG.L2} 个月现金攒出来，再谈投资。` });
+  }
+  if (vol !== null && vol < 0.5) {
+    warnings.push({ type: 'note', t: `你的收入波动很大（最差 3 个月的月均只有中位月的 ${(vol * 100).toFixed(0)}%）。书里对自由职业者的原话是"这是要付出的一点小代价"——所以你的安全垫应该往 ${CFG.L4} 个月靠，而不是 6 个月。` });
+  }
+  if (d.debtMortgageRate > 0 && d.debtMortgage > 0 && C > d.debtMortgage * 0 + 0 && months < CFG.L3) {
+    warnings.push({ type: 'note', t: `你有 ¥${fmt(d.debtMortgage)} 房贷（利率 ${d.debtMortgageRate}%）。"该不该提前还贷"这个问题，书里的答案不是看利率，而是"先把三张表拿出来，看你的流动性有多紧绷"——你现在流动性紧，所以流动性优先。` });
+  }
+  if (d.hasGuarantee) warnings.push({ type: 'alert', t: '你有个人担保/抵押在身。这是全表最容易被忽略的负债，也是把你的创业风险和家庭财产绑在一起的那根绳。' });
+
+  // ------- 伴侣 -------
+  let couple = null;
+  if (d.hasPartner) {
+    const shared = d.sharedCost > 0 ? d.sharedCost : M;
+    const myIncome = d.incMedian > 0 ? d.incMedian : (d.incWorst3 || 0);
+    const pi = d.partnerIncome > 0 ? d.partnerIncome : 0;
+    const total = myIncome + pi;
+    const myShare = total > 0 ? shared * (myIncome / total) : shared / 2;
+    const capByWorst = d.incWorst3 > 0 ? d.incWorst3 : 0;
+    couple = {
+      shared, myShare: Math.round(myShare), partnerShare: Math.round(shared - myShare),
+      capByWorst: Math.round(capByWorst),
+      overCap: capByWorst > 0 && myShare > capByWorst,
+      sameIndustry: d.sameIndustry, partnerSocial: d.partnerSocial
+    };
+  }
+
+  // ------- 红线 -------
+  const redlines = [];
+  if (stage <= 2) {
+    redlines.push('用家庭的钱给自己的创业项目加杠杆——你的人力资产已经是这张期权了，别再用金融资产加注。[书·1章]');
+    redlines.push(`安全垫不满 ${CFG.L2} 个月就做风险投资。[书·2章 / 播客 65:27]`);
+  }
+  redlines.push('买自己行业/自己赛道的股票、基金、股权——"你了解这个行业，跟你了解这个行业的股票，完全不是一回事"。[播客 77:00]');
+  redlines.push('因为"稀缺机会"就下重注：朋友的项目、原始股、熟人额度，先过三问——稀缺从何而来？为何轮到我？它用什么交换了完美？"你看中的是它承诺的高收益，它看中的是你的全部本金。"[书·9章]');
+  redlines.push(`上杠杆，或让单一资产/策略超过总资产的 ${CFG.SINGLE_CAP * 100}%（规模大时 ${CFG.SINGLE_CAP_BIG * 100}%）。[书·6章]`);
+  redlines.push('直接升级生活方式（换更好的房、加订阅、整体抬消费档）——"甜蜜的圈套不是一夜发生的，它是一点一点在腐蚀家庭的现金流。"作者自己六年没搬家。[播客 59:50]');
+  if (d.hasPartner) {
+    redlines.push('在两个人之间搞"额度制"——"你给了，其实第一就是对对方的不信任。"[播客 21:32]');
+    redlines.push('隐瞒收入与负债——他自认这辈子最糟糕的财务决策就是"隐瞒"。[播客 24:31]');
+    redlines.push('和伴侣在同一家公司/同一个行业——那是"一荣俱荣、一损俱损"的正相关。[书·1章]');
+  }
+  redlines.push('天天看账户、频繁交易——"减少投资决策的频率，减少交易的频率"。[播客 80:58]');
+  redlines.push('被"突发宏观消息"牵着走——"所有值得我们重视的变化都不会是在一瞬间发生的"。[书·10章]');
+
+  // ------- 90 天日历 -------
+  let calendar = [];
+  if (stage === 0) calendar = [
+    ['第 1 周', '算 M / C / A，列负债（含担保），填回本页'],
+    ['第 2 周', '和伴侣约一次"只谈知情权"的财务会，一起更新三张表'],
+    ['第 3–4 周', '重新生成方案，进入真正的当前阶段']
+  ];
+  else if (stage === 1) calendar = [
+    ['第 1 周', '列出所有负债与利率，从最高的开始还；停掉以贷养创'],
+    ['第 2 周', '续上社保；开始配百万医疗 + 意外 + 定寿'],
+    ['第 3 周', '家庭账户与业务账户物理分开；开安全垫账户并设自动转账'],
+    ['第 4 周', '设过夜线；确认没有新增担保/抵押'],
+    ['第 2–3 个月', '清高息债的同时把安全垫推到 1 × M，然后重生成方案']
+  ];
+  else if (stage === 2) calendar = [
+    ['第 1 周', `开安全垫账户（货币基金）+ 自动转账，目标先到 ¥${fmt(M * CFG.L1)}`],
+    ['第 2 周', '砍固定支出：把 M 逐项过一遍，能降的先降'],
+    ['第 3 周', '落地四账户分流，按最差 3 个月月均给自己发固定工资'],
+    ['第 4 周', '和伴侣明确"重大决策清单"（含创业投入、担保）'],
+    ['第 2 个月', `安全垫到 1 × M（¥${fmt(M * CFG.L1)}），重算一次 M`],
+    ['第 3 个月', `安全垫到 3 × M（¥${fmt(M * CFG.L2)}）→ 此时才允许启动第三笔钱的小额定投；做第一次季度复盘`]
+  ];
+  else calendar = [
+    ['第 1 周', '设好第三笔钱的自动定投（小金额、宽基、避开自己行业）'],
+    ['第 2 周', '把五条纪律写下来：20% 上限 / 月换手 5% / 20% 止盈 / 30-90-360 复盘 / 不加杠杆'],
+    ['第 3 周', months >= CFG.L3 ? '启动第二笔钱：3–5 年确定支出 → 定存或纯债，期限匹配' : `继续把安全垫推到 ${CFG.L3} × M`],
+    ['第 4 周', '和伴侣做季度家庭财务会；确认双方的收入波动都知情'],
+    ['第 2 个月', '记一次投资账；检查有没有偏离纪律'],
+    ['第 3 个月', '季度复盘：更新三张表、重算 M 与安全垫、检查资产是否与自己的行业过度相关']
+  ];
+
+  return { M, C, A, risk, months, vol, threshold, nightLine, cooldown1, cooldown2, spreadLoss,
+           stage, sub, stageMeta: STAGE_META[stage], blockers, actions, parallel, stats,
+           buckets, warnings, couple, redlines, calendar, hasCore, input: d };
+}
+
+/* =======================================================================
+   工具
+   ======================================================================= */
+function fmt(n){
+  if (n === null || n === undefined || isNaN(n)) return '—';
+  const r = Math.round(n);
+  return r.toLocaleString('zh-CN');
+}
+function esc(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+/* =======================================================================
+   DOM
+   ======================================================================= */
+function readInputs(){
+  const v = id => { const el = document.getElementById(id); if (!el) return 0; const x = parseFloat(el.value); return isNaN(x) ? 0 : x; };
+  const s = id => { const el = document.getElementById(id); return el ? el.value : ''; };
+  const cash = ['aCash','aMmf','aDeposit'].reduce((a,id) => a + v(id), 0);
+  const liq  = ['aBond','aStock','aGold','aOther'].reduce((a,id) => a + v(id), 0);
+  const expSum = ['expRent','expUtil','expSocial','expInsurance','expDebt','expCommute','expFood','expFamily','expOther']
+    .reduce((a,id) => a + v(id), 0);
+  const override = v('expTotalOverride');
+  const M = override > 0 ? override : expSum;
+  const anyAssetFilled = ['aCash','aMmf','aDeposit','aBond','aStock','aGold','aOther']
+    .some(id => document.getElementById(id) && document.getElementById(id).value !== '');
+  return {
+    age: v('age'), jobType: s('jobType'), hasPartner: s('hasPartner') === 'yes',
+    incBest: v('incBest'), incMedian: v('incMedian'), incWorst3: v('incWorst3'), saveMonthly: v('saveMonthly'),
+    M, expenseSum: expSum, Moverride: override,
+    C: cash, A: cash + liq,
+    aBond: v('aBond'), aStock: v('aStock'), aGold: v('aGold'), aOther: v('aOther'),
+    anyAssetFilled,
+    debtHigh: v('debtHigh'), debtHighRate: v('debtHighRate'),
+    debtMortgage: v('debtMortgage'), debtMortgageRate: v('debtMortgageRate'),
+    hasGuarantee: s('hasGuarantee') === 'yes',
+    socialOn: s('socialOn') === 'yes', hasMedical: s('hasMedical') === 'yes', hasLife: s('hasLife') === 'yes',
+    future3y: v('future3y'), retireSpend: v('retireSpend'),
+    partnerIncome: v('partnerIncome'), sharedCost: v('sharedCost'),
+    sameIndustry: s('sameIndustry') === 'yes', partnerSocial: s('partnerSocial') === 'yes'
+  };
+}
+
+function render(r){
+  const out = document.getElementById('out');
+  const h = [];
+  const st = r.stageMeta;
+
+  // 阶段
+  h.push(`<section class="card stage">
+    <div class="code">${st.code}${r.sub ? ' · ' + esc(r.sub) : ''}</div>
+    <div class="name">${esc(st.name)}</div>
+    <div class="why">${esc(st.why)}</div>
+    ${r.blockers.length ? `<div class="alert" style="margin-top:12px"><b>触发判定的原因：</b><ul class="rl">${r.blockers.map(b => '<li>' + esc(b) + '</li>').join('')}</ul></div>` : ''}
+    <div class="src">判定规则：${st.code === '阶段 0' ? '关键数字缺失' : (st.code === '阶段 1' ? '存在止血项（高息负债 / 个人担保 / 社保断缴）' : (st.code === '阶段 2' ? `安全垫现金 C ÷ M < ${CFG.L2} 个月` : `安全垫现金 C ÷ M ≥ ${CFG.L2} 个月`))}　[书·1/2/10章 + 推演]</div>
+  </section>`);
+
+  // 现在做什么
+  h.push(`<section class="card"><h2><span class="n">→</span>现在就做这几件事</h2><ol class="acts">${
+    r.actions.map(a => `<li><b>${esc(a.t)}</b>${a.tag ? `<span class="tag">${esc(a.tag)}</span>` : ''}<div class="d">${esc(a.d)}</div></li>`).join('')
+  }</ol></section>`);
+
+  // 并行阶段
+  h.push(`<section class="card"><h2><span class="n">∥</span>并行任务（不用等，今天就能做）</h2>
+    <div class="row">${r.parallel.map(p => `<span class="pill ${p.done ? 'done' : 'todo'}">${p.done ? '✓ ' : ''}${esc(p.t)}</span>`).join('')}</div>
+    <ul class="rl" style="margin-top:10px">${r.parallel.map(p => `<li>${esc(p.d)}</li>`).join('')}</ul>
+  </section>`);
+
+  // 警告
+  if (r.warnings.length) {
+    h.push(`<section class="card"><h2><span class="n">!</span>需要你马上注意</h2>${
+      r.warnings.map(w => `<div class="${w.type}">${esc(w.t)}</div>`).join('')
+    }</section>`);
+  }
+
+  // 关键数字
+  h.push(`<section class="card"><h2><span class="n">#</span>你的关键数字</h2>
+    <div class="stats">${r.stats.map(s => `<div class="stat"><div class="k">${esc(s.k)}</div><div class="v">${esc(s.v)}</div><div class="n">${esc(s.n)}</div></div>`).join('')}</div>
+    <div class="src">消费阈值公式：<b>（流动资产 + 工资年收入 × 20）÷ 10000</b>，自由职业者不加收入项。[书·2章]　过夜线与 L1–L4 阶梯是 <b>[推演]</b>。</div>
+  </section>`);
+
+  // 三笔钱
+  h.push(`<section class="card"><h2><span class="n">¥</span>三笔钱进度</h2>${
+    r.buckets.map(b => {
+      const pct = b.pct === null ? null : Math.round(b.pct * 100);
+      return `<div class="bucket">
+        <div class="t">${b.t}</div>
+        <div>
+          ${pct === null ? '<div class="n" style="color:#6b7280">单独隔离，不纳入家庭资产</div>'
+            : `<div class="bar"><i style="width:${pct}%"></i></div>
+               <div class="n">${b.target > 0 ? `¥${fmt(b.cur)} / ¥${fmt(b.target)}（${pct}%）` : '目标未填（可在上面补"未来 3 年支出 / 退休年支出"）'}</div>`}
+          <div class="n" style="margin-top:4px">${esc(b.n)}</div>
+        </div></div>`;
+    }).join('')
+  }<div class="src">[书·1/2/5章 · 播客 64:47]；分级解锁条件是 <b>[推演]</b>。</div></section>`);
+
+  // 伴侣
+  if (r.couple) {
+    const c = r.couple;
+    h.push(`<section class="card"><h2><span class="n">♡</span>和伴侣怎么管</h2>
+      <p style="margin:0 0 10px"><b>三账户制</b>：共同日常 / 共同目标与安全垫 / 各自个人账户 + 各自小金库。<br>
+      不建议长期纯 AA（有孩子和父母养老之后算不清了），也不建议一步到位全合并。</p>
+      <div class="stats">
+        <div class="stat"><div class="k">共同月支出（估计）</div><div class="v">¥${fmt(c.shared)}</div><div class="n">你没填就按你的 M 估</div></div>
+        <div class="stat"><div class="k">建议你承担的固定额</div><div class="v">¥${fmt(c.myShare)}</div><div class="n">按双方收入比例分摊</div></div>
+        <div class="stat"><div class="k">伴侣承担</div><div class="v">¥${fmt(c.partnerShare)}</div><div class="n">同上</div></div>
+      </div>
+      ${c.overCap ? `<div class="note">⚠️ 按收入比例算出来你要出 ¥${fmt(c.myShare)}，但你的<b>最差 3 个月月均只有 ¥${fmt(c.capByWorst)}</b>。建议改成"<b>保底固定额 + 超额按比例</b>"：保底就按 ¥${fmt(Math.min(c.myShare, Math.round(c.capByWorst * 0.6)))} 定，旺季再从缓冲池补进来。你收入不稳，共同账户的分摊必须按最差月份设计，而不是按平均月份。[推演]</div>`
+        : `<div class="good">按收入比例分摊是可行的。记得把"保底固定额"锚定在<b>你收入最差的那 3 个月</b>，而不是平均月份。[推演]</div>`}
+      <p style="margin:12px 0 6px"><b>三步走（顺序不能跳）</b></p>
+      <ol class="acts">
+        <li><b>先要知情权</b><div class="d">坐下来"一起更新家里的三张表"。他评价这是"一个很好的技巧"——因为你们拿到了同一组数字。别指望对方主动完整披露，他自己承认犯过的错就是"隐瞒"。[播客 23:52]</div></li>
+        <li><b>再要重大决策权</b><div class="d">他列的是买房、换工作、换城市；你要再加四条：要不要往我的创业里投家庭的钱 / 要不要为我担保 / 我的收入低到多少启动应急预案 / 什么时候买房生育。[推演]</div></li>
+        <li><b>然后做彼此的顾问</b><div class="d">重大决定时先把三张表摊开、先不表态支持或反对，再以顾问身份分析——"让对方觉得你是站在他的角度思考问题"。竹子 2017 年那次就是这么被点醒的，她当场觉得"这个人以后可以跟他聊钱"。[播客 32:17]</div></li>
+      </ol>
+      <div class="${c.sameIndustry ? 'alert' : 'note'}" style="margin-top:10px">
+        ${c.sameIndustry ? '⚠️ 你们在同一家公司或同一行业。书里把它叫作相关性风险——"一荣俱荣，一损俱损"，你们会同时归零。如果能分开，尽量分开。[书·1章]'
+          : '你们不在同一行业，这本身就是一种资产配置：降低了家庭的收入相关性。保持住。[书·1章]'}
+      </div>
+      ${!c.partnerSocial ? `<div class="note">伴侣的社保状态不清楚或断缴——TA 的独立社保本身就是你们家庭的分散化，去确认一下。[推演]</div>` : ''}
+    </section>`);
+  }
+
+  // 红线
+  h.push(`<section class="card"><h2><span class="n">✕</span>这些事现在不要做</h2><ul class="rl">${
+    r.redlines.map(x => `<li>${esc(x)}</li>`).join('')
+  }</ul></section>`);
+
+  // 日历
+  h.push(`<section class="card"><h2><span class="n">▦</span>90 天日历</h2><table class="cal">${
+    r.calendar.map(row => `<tr><td>${esc(row[0])}</td><td>${esc(row[1])}</td></tr>`).join('')
+  }</table></section>`);
+
+  // 导出
+  h.push(`<section class="card noprint"><div class="btnbar">
+    <button id="btnCopy" class="ghost">复制结果（Markdown）</button>
+    <button id="btnPrint" class="ghost">打印 / 存 PDF</button>
+  </div><div class="src" id="copyMsg"></div></section>`);
+
+  out.innerHTML = h.join('');
+  out.hidden = false;
+  document.getElementById('btnPrint').onclick = () => window.print();
+  document.getElementById('btnCopy').onclick = () => {
+    const md = toMarkdown(r);
+    navigator.clipboard.writeText(md).then(
+      () => { document.getElementById('copyMsg').textContent = '已复制到剪贴板。'; },
+      () => {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([md], {type:'text/markdown'}));
+        a.download = '我的资产配置自查.md'; a.click();
+        document.getElementById('copyMsg').textContent = '剪贴板不可用，已改为下载文件。';
+      });
+  };
+  out.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function toMarkdown(r){
+  const L = [];
+  L.push('# 我的资产配置自查结果\n');
+  L.push(`## ${r.stageMeta.code}${r.sub ? ' · ' + r.sub : ''}：${r.stageMeta.name}\n`);
+  L.push(r.stageMeta.why + '\n');
+  if (r.blockers.length) L.push('**触发原因**\n' + r.blockers.map(b => '- ' + b).join('\n') + '\n');
+  L.push('## 现在就做\n' + r.actions.map((a, i) => `${i + 1}. **${a.t}**${a.tag ? '（' + a.tag + '）' : ''}\n   ${a.d}`).join('\n') + '\n');
+  L.push('## 关键数字\n' + r.stats.map(s => `- ${s.k}：${s.v}（${s.n}）`).join('\n') + '\n');
+  if (r.warnings.length) L.push('## 需要马上注意\n' + r.warnings.map(w => '- ' + w.t).join('\n') + '\n');
+  L.push('## 这些事现在不要做\n' + r.redlines.map(x => '- ' + x).join('\n') + '\n');
+  L.push('## 90 天日历\n' + r.calendar.map(c => `- ${c[0]}：${c[1]}`).join('\n') + '\n');
+  L.push('\n---\n依据：大卫翁《资产配置行动指南》+ 播客《嗨咻》110 期。不构成投资、法律或税务意见。');
+  return L.join('\n');
+}
+
+/* =======================================================================
+   初始化
+   ======================================================================= */
+const STORAGE_KEY = 'davidweng_plan_v1';
+
+function saveState(){
+  try{
+    const data = {};
+    document.querySelectorAll('input,select').forEach(el => { if (el.id) data[el.id] = el.value; });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }catch(e){}
+}
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    Object.keys(data).forEach(id => { const el = document.getElementById(id); if (el) el.value = data[id]; });
+  }catch(e){}
+}
+
+function init(){
+  loadState();
+  document.querySelectorAll('input,select').forEach(el => {
+    el.addEventListener('input', () => { saveState(); if (!document.getElementById('out').hidden) run(); });
+    el.addEventListener('change', () => { saveState(); syncCoupleVisibility(); if (!document.getElementById('out').hidden) run(); });
+  });
+  syncCoupleVisibility();
+  document.getElementById('btnCalc').onclick = run;
+  document.getElementById('btnClear').onclick = () => {
+    document.querySelectorAll('input').forEach(el => el.value = '');
+    document.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
+    saveState(); document.getElementById('out').hidden = true;
+  };
+  document.getElementById('btnDemo').onclick = () => {
+    const demo = {
+      age:'32', jobType:'founder', hasPartner:'yes',
+      incBest:'60000', incMedian:'25000', incWorst3:'8000', saveMonthly:'4000',
+      expRent:'6500', expUtil:'500', expSocial:'1800', expInsurance:'300', expDebt:'0',
+      expCommute:'600', expFood:'2000', expFamily:'0', expOther:'1000',
+      aCash:'3000', aMmf:'5000', aDeposit:'0', aBond:'0', aStock:'20000', aGold:'0', aOther:'0',
+      debtHigh:'35000', debtHighRate:'15', debtMortgage:'0', debtMortgageRate:'0',
+      hasGuarantee:'yes', socialOn:'no', hasMedical:'no', hasLife:'no',
+      future3y:'400000', retireSpend:'120000',
+      partnerIncome:'18000', sharedCost:'11000', sameIndustry:'no', partnerSocial:'yes'
+    };
+    Object.keys(demo).forEach(id => { const el = document.getElementById(id); if (el) el.value = demo[id]; });
+    saveState(); run();
+  };
+}
+
+function syncCoupleVisibility(){
+  const has = document.getElementById('hasPartner').value === 'yes';
+  document.getElementById('coupleField').style.display = has ? '' : 'none';
+}
+
+function run(){
+  const d = readInputs();
+  const r = computeAll(d);
+  render(r);
+  saveState();
+}
+
+if (typeof document !== 'undefined') {
+  document.addEventListener('DOMContentLoaded', init);
+}
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { computeAll, CFG, render, toMarkdown, fmt };
+}
+</script>
+</body>
+</html>
